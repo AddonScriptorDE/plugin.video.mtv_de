@@ -2,3 +2,4 @@
 1.0.1 - Added Category: Latest Music Clips
 1.0.2 - Added <disclaimer> Tag to addon.xml
 1.0.3 - Changed Timeout
+2.0.0 - Changed search & added playlists, collections and favorites
