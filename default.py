@@ -232,32 +232,30 @@ def playVideo(url):
         content = getUrl("http://api.mtvnn.com/v2/mrss.xml?uri=mgid:sensei:video:mtvnn.com:music_video-"+url+"-DE")
         match=re.compile("<media:content duration='0' isDefault='true' type='text/xml' url='(.+?)'></media:content>", re.DOTALL).findall(content)
         content = getUrl(match[0])
-        if content.find("<src>/www/custom/intl/errorslates/video_error.flv</src>")>=0:
-          xbmc.executebuiltin('XBMC.Notification(Error!,Video is not available...,5000)')
+        if content.find("/www/custom/intl/errorslates/video_error.flv")>=0:
+          xbmc.executebuiltin('XBMC.Notification(Error!,Video is not available,5000)')
+        elif content.find("/www/custom/intl/errorslates/copyright_error.flv")>=0:
+          xbmc.executebuiltin('XBMC.Notification(Error!,Video is not available (copyright issues),5000)')
         else:
-          match1=re.compile('type="video/mp4" bitrate="1700">\n<src>(.+?)</src>', re.DOTALL).findall(content)
-          match2=re.compile('type="video/mp4" bitrate="1200">\n<src>(.+?)</src>', re.DOTALL).findall(content)
-          match3=re.compile('type="video/x-flv" bitrate="800">\n<src>(.+?)</src>', re.DOTALL).findall(content)
-          match4=re.compile('type="video/mp4" bitrate="750">\n<src>(.+?)</src>', re.DOTALL).findall(content)
-          match5=re.compile('type="video/x-flv" bitrate="600">\n<src>(.+?)</src>', re.DOTALL).findall(content)
-          match6=re.compile('type="video/mp4" bitrate="400">\n<src>(.+?)</src>', re.DOTALL).findall(content)
-          match7=re.compile('type="video/x-flv" bitrate="250">\n<src>(.+?)</src>', re.DOTALL).findall(content)
-          url=""
-          if len(match1)==1:
-            url=match1[0]
-          elif len(match2)==1:
-            url=match2[0]
-          elif len(match3)==1:
-            url=match3[0]
-          elif len(match4)==1:
-            url=match4[0]
-          elif len(match5)==1:
-            url=match5[0]
-          elif len(match6)==1:
-            url=match6[0]
-          elif len(match7)==1:
-            url=match7[0]
-          listitem = xbmcgui.ListItem(path=url+" swfVfy=1 swfUrl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.9.1.swf")
+          if content.find('type="video/mp4" bitrate="1700">')>=0:
+            content=content[content.find('type="video/mp4" bitrate="1700">'):]
+          elif content.find('type="video/mp4" bitrate="1200">')>=0:
+            content=content[content.find('type="video/mp4" bitrate="1200">'):]
+          elif content.find('type="video/mp4" bitrate="750">')>=0:
+            content=content[content.find('type="video/mp4" bitrate="750">'):]
+          elif content.find('type="video/x-flv" bitrate="800">')>=0:
+            content=content[content.find('type="video/x-flv" bitrate="800">'):]
+          elif content.find('type="video/x-flv" bitrate="600">')>=0:
+            content=content[content.find('type="video/x-flv" bitrate="600">'):]
+          elif content.find('type="video/mp4" bitrate="400">')>=0:
+            content=content[content.find('type="video/mp4" bitrate="400">'):]
+          elif content.find('type="video/x-flv" bitrate="250">')>=0:
+            content=content[content.find('type="video/x-flv" bitrate="250">'):]
+          url=content[content.find("<src>")+5:content.find("</src>")]
+          if url.find("http://")==0:
+            listitem = xbmcgui.ListItem(path=url)
+          elif url.find("rtmp://")==0 or url.find("rtmpe://")==0:
+            listitem = xbmcgui.ListItem(path=url+" swfVfy=1 swfUrl=http://media.mtvnservices.com/player/prime/mediaplayerprime.1.9.1.swf")
           return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 def search(SEARCHTYPE):
