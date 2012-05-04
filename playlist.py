@@ -7,9 +7,9 @@ addon_work_folder=xbmc.translatePath("special://profile/addon_data/"+addonID)
 playlist=xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+addonID+".playlists")
 settings = xbmcaddon.Addon(id=addonID)
 
-playlistsTemp=[None]*10
+playlistsTemp=[]
 for i in range(0,9,1):
-  playlistsTemp[i]=settings.getSetting("pl"+str(i))
+  playlistsTemp.append(settings.getSetting("pl"+str(i)))
 playlists=[]
 for pl in playlistsTemp:
   if pl!="":
@@ -24,7 +24,7 @@ mode=mode[:mode.find("###")]
 playlistEntry=param[param.find("###URL###="):]
 
 if mode=="ADD":
-  if len(playlists)<=2:
+  if len(playlists)==1:
     pl = playlists[0]
   else:
     dialog = xbmcgui.Dialog()
