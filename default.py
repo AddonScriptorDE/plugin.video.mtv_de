@@ -123,10 +123,12 @@ def listVideosFromFavs(url):
 def titles():
         xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_PRODUCTIONCODE)
         xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
+        numTitles=-1
         if os.path.exists(titlesListFile):
           fh = open(titlesListFile, 'r')
           all_lines = fh.readlines()
-          rndNumbers=random.sample(range(len(all_lines)), len(all_lines))
+          numTitles=len(all_lines)
+          rndNumbers=random.sample(range(numTitles), numTitles)
           i=0
           for line in all_lines:
             url=line[line.find("###URL###=")+10:]
@@ -138,6 +140,8 @@ def titles():
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
         if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
+        wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+        wnd.getControl(wnd.getFocusId()).selectItem(1)
 
 def playVideoFromPlaylist(url):
         listitem = xbmcgui.ListItem(path=urllib.unquote_plus(url))
