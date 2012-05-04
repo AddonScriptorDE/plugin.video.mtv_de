@@ -40,7 +40,6 @@ def index():
         addDir(translation(30006),"SEARCH_SPECIAL",'search',"")
         addDir("Playlisten","PLAYLISTMAIN",'playlistMain',"")
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
 
 def cleanTitle(title):
         return title.replace("&lt;","<").replace("&gt;",">").replace("&amp;","&").replace("&#039;","\\").replace("&quot;","\"").strip()
@@ -60,8 +59,6 @@ def playlistMain():
           else:
             for pl in playlists:
               addDir(pl,pl,'playlist',"")
-            xbmcplugin.endOfDirectory(pluginhandle)
-            if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
         xbmcplugin.endOfDirectory(pluginhandle)
 
 def playlist(playlist):
@@ -86,7 +83,6 @@ def playlist(playlist):
             i=i+1
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(500)')
 
 def artists():
         xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
@@ -100,7 +96,6 @@ def artists():
             addArtistDir(title,url,'listVideos',"")
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
 
 def artistsFavs():
         xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
@@ -115,7 +110,6 @@ def artistsFavs():
             addArtistFavDir(title,urllib.quote_plus(url),'listVideosFromFavs',"")
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
 
 def listVideosFromFavs(url):
         listVideos(urllib.unquote_plus(url))
@@ -139,7 +133,6 @@ def titles():
             i=i+1
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
         wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
         wnd.getControl(wnd.getFocusId()).selectItem(1)
 
@@ -193,7 +186,6 @@ def listVideos(url):
                 newTitles = newTitles + titleInfos
               addLink(title,url,'playVideo',thumb)
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(500)')
         xbmc.executebuiltin('XBMC.RunScript(special://home/addons/'+addonID+'/titles.py,'+urllib.quote_plus(newTitles)+')')
 
 def listVideosLatest(url):
@@ -225,7 +217,6 @@ def listVideosLatest(url):
             newTitles = newTitles + titleInfos
           addLink(titleNew,url,'playVideo',thumb)
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(500)')
         xbmc.executebuiltin('XBMC.RunScript(special://home/addons/'+addonID+'/titles.py,'+urllib.quote_plus(newTitles)+')')
 
 def playVideo(url):
@@ -289,7 +280,6 @@ def search(SEARCHTYPE):
                 newArtists = newArtists + artistInfos
               addArtistDir(title,url,'listVideos',"")
             xbmcplugin.endOfDirectory(pluginhandle)
-            if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
             xbmc.executebuiltin('XBMC.RunScript(special://home/addons/'+addonID+'/artists.py,'+urllib.quote_plus(newArtists)+')')
           else:
             url="http://www.google.de/search?q=site:http://www.mtv.de/musikvideos/%20"+search_string+"&ie=UTF-8"
@@ -313,7 +303,6 @@ def search(SEARCHTYPE):
               if url.find("/playlist")==-1:
                 addLink(title,url,'playVideo',"")
             xbmcplugin.endOfDirectory(pluginhandle)
-            if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
 
 def getUrl(url):
         req = urllib2.Request(url)
