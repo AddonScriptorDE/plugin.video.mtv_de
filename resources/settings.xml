@@ -1,4 +1,5 @@
 <settings>
+   <setting id="filterVids" type="bool" label="30201" default="true"/>
    <setting id="pl0" type="text" label="30100" default="Default" />
    <setting id="pl1" type="text" label="30101" default="" />
    <setting id="pl2" type="text" label="30102" default="" />

@@ -12,6 +12,8 @@ titlesListFile=xbmc.translatePath("special://profile/addon_data/"+addonID+"/"+ad
 settings = xbmcaddon.Addon(id=addonID)
 translation = settings.getLocalizedString
 
+filterVids=settings.getSetting("filterVids")
+
 def index():
         artistsCount=0
         if os.path.exists(artistsListFile):
@@ -26,19 +28,26 @@ def index():
         titlesCount=0
         if os.path.exists(titlesListFile):
           fh = open(titlesListFile, 'r')
-          titlesCount = len(fh.readlines())
+          if filterVids=="true": 
+            all_lines = fh.readlines()
+            titlesCount=0
+            for line in all_lines:
+              if line.lower().find("all eyes on")==-1 and line.lower().find("interview")==-1:
+                titlesCount=titlesCount+1
+          else:
+            titlesCount = len(fh.readlines())
           fh.close()
         addDir(translation(30007),"http://www.mtv.de/musikvideos",'listVideosLatest',"")
         addDir(translation(30001),"http://www.mtv.de/charts/5-hitlist-germany-top-100",'listVideos',"")
         addDir(translation(30002),"http://www.mtv.de/charts/7-deutsche-black-charts",'listVideos',"")
         addDir(translation(30003),"http://www.mtv.de/charts/6-dance-charts",'listVideos',"")
         addDir(translation(30004),"http://www.mtv.de/musikvideos/11-mtv-de-videocharts/playlist",'listVideos',"")
-        addDir("Interpreten-Sammlung ("+str(artistsCount)+")","ARTISTS",'artists',"")
-        addDir("Interpreten-Favoriten ("+str(artistsFavsCount)+")","ARTISTSFAVS",'artistsFavs',"")
-        addDir("Titel-Sammlung ("+str(titlesCount)+")","ARTISTS",'titles',"")
+        addDir(str(translation(30008))+" ("+str(artistsCount)+")","ARTISTS",'artists',"")
+        addDir(str(translation(30009))+" ("+str(artistsFavsCount)+")","ARTISTSFAVS",'artistsFavs',"")
+        addDir(str(translation(30010))+" ("+str(titlesCount)+")","ARTISTS",'titles',"")
         addDir(translation(30005),"SEARCH_ARTIST",'search',"")
         addDir(translation(30006),"SEARCH_SPECIAL",'search',"")
-        addDir("Playlisten","PLAYLISTMAIN",'playlistMain',"")
+        addDir(translation(30011),"PLAYLISTMAIN",'playlistMain',"")
         xbmcplugin.endOfDirectory(pluginhandle)
 
 def cleanTitle(title):
@@ -62,12 +71,16 @@ def playlistMain():
         xbmcplugin.endOfDirectory(pluginhandle)
 
 def playlist(playlist):
-        xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
+        xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_UNSORTED)
         xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_PRODUCTIONCODE)
+        xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
         if os.path.exists(playlistFile):
           fh = open(playlistFile, 'r')
+          count=fh.read().count("###PLAYLIST###="+playlist+"###")
+          rndNumbers=random.sample(range(count), count)
+          fh.close()
+          fh = open(playlistFile, 'r')
           all_lines = fh.readlines()
-          rndNumbers=random.sample(range(len(all_lines)), len(all_lines))
           i=0
           for line in all_lines:
             pl=line[line.find("PLAYLIST###=")+12:]
@@ -80,9 +93,14 @@ def playlist(playlist):
             thumb=thumb[:thumb.find("###END###")]
             if pl==playlist:
               addPlaylistLink(title,urllib.quote_plus(url),'playVideoFromPlaylist',thumb,(rndNumbers[i]+1),playlist)
-            i=i+1
+              i=i+1
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
+        try:
+          wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+          wnd.getControl(wnd.getFocusId()).selectItem(1)
+        except:
+          pass
 
 def artists():
         xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
@@ -129,7 +147,11 @@ def titles():
             url=url[:url.find("###TITLE###")]
             title=line[line.find("###TITLE###=")+12:]
             title=title[:title.find("!!!END!!!")]
-            addLink(title,url,'playVideo',"",(rndNumbers[i]+1))
+            if filterVids=="true":
+              if title.lower().find("all eyes on")==-1 and title.lower().find("interview")==-1:
+                addLink(title,url,'playVideo',"",(rndNumbers[i]+1))
+            else:
+              addLink(title,url,'playVideo',"",(rndNumbers[i]+1))
             i=i+1
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
@@ -184,7 +206,11 @@ def listVideos(url):
                 title=match[0]+". "+title
               if contentTitles.find(titleInfos)==-1 and newTitles.find(titleInfos)==-1:
                 newTitles = newTitles + titleInfos
-              addLink(title,url,'playVideo',thumb)
+              if filterVids=="true":
+                if title.lower().find("all eyes on")==-1 and title.lower().find("interview")==-1:
+                  addLink(title,url,'playVideo',thumb)
+              else:
+                addLink(title,url,'playVideo',thumb)
         xbmcplugin.endOfDirectory(pluginhandle)
         xbmc.executebuiltin('XBMC.RunScript(special://home/addons/'+addonID+'/titles.py,'+urllib.quote_plus(newTitles)+')')
 
@@ -341,14 +367,13 @@ def addLink(name,url,mode,iconimage,rndPos=""):
         return ok
 
 def addPlaylistLink(name,url,mode,iconimage,rndPos,playlist):
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
         ok=True
         liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": name, "Code": str(rndPos) } )
         liz.setProperty('IsPlayable', 'true')
         playListInfos="###MODE###=REMOVE###REFRESH###=TRUE###URL###="+urllib.unquote_plus(url)+"###TITLE###="+name+"###THUMB###="+iconimage+"###END###PLAYLIST###="+playlist+"###PLEND###"
         liz.addContextMenuItems([('Remove from Playlist', 'XBMC.RunScript(special://home/addons/'+addonID+'/playlist.py,'+urllib.quote_plus(playListInfos)+')',)])
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
+        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=urllib.unquote_plus(url),listitem=liz)
         return ok
 
 def addDir(name,url,mode,iconimage):
