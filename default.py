@@ -96,11 +96,6 @@ def playlist(playlist):
               i=i+1
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
-        try:
-          wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
-          wnd.getControl(wnd.getFocusId()).selectItem(1)
-        except:
-          pass
 
 def artists():
         xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL)
@@ -155,8 +150,11 @@ def titles():
             i=i+1
           fh.close()
         xbmcplugin.endOfDirectory(pluginhandle)
-        wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
-        wnd.getControl(wnd.getFocusId()).selectItem(1)
+        try:
+          wnd = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+          wnd.getControl(wnd.getFocusId()).selectItem(1)
+        except:
+          pass
 
 def playVideoFromPlaylist(url):
         listitem = xbmcgui.ListItem(path=urllib.unquote_plus(url))
