@@ -6,3 +6,4 @@
 2.0.1 - Fixed some videos that where not playing
 2.0.2 - Fixed problems in playlist.py on non win os
 2.0.3 - Various fixes and optical optimizations
+2.0.4 - Added 720p support & Fixed some Videos that where not playing

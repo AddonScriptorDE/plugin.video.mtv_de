@@ -251,25 +251,31 @@ def playVideo(url):
         content = getUrl("http://api.mtvnn.com/v2/mrss.xml?uri=mgid:sensei:video:mtvnn.com:music_video-"+url+"-DE")
         match=re.compile("<media:content duration='0' isDefault='true' type='text/xml' url='(.+?)'></media:content>", re.DOTALL).findall(content)
         content = getUrl(match[0])
-        if content.find("/www/custom/intl/errorslates/video_error.flv")>=0:
+        if content.find('type="video/mp4" bitrate="3500">')>=0:
+          content=content[content.find('type="video/mp4" bitrate="3500">'):]
+        elif content.find('type="video/mp4" bitrate="2200">')>=0:
+          content=content[content.find('type="video/mp4" bitrate="2200">'):]
+        elif content.find('type="video/mp4" bitrate="1700">')>=0:
+          content=content[content.find('type="video/mp4" bitrate="1700">'):]
+        elif content.find('type="video/mp4" bitrate="1200">')>=0:
+          content=content[content.find('type="video/mp4" bitrate="1200">'):]
+        elif content.find('type="video/mp4" bitrate="750">')>=0:
+          content=content[content.find('type="video/mp4" bitrate="750">'):]
+        elif content.find('type="video/x-flv" bitrate="800">')>=0:
+          content=content[content.find('type="video/x-flv" bitrate="800">'):]
+        elif content.find('type="video/x-flv" bitrate="600">')>=0:
+          content=content[content.find('type="video/x-flv" bitrate="600">'):]
+        elif content.find('type="video/mp4" bitrate="400">')>=0:
+          content=content[content.find('type="video/mp4" bitrate="400">'):]
+        elif content.find('type="video/x-flv" bitrate="250">')>=0:
+          content=content[content.find('type="video/x-flv" bitrate="250">'):]
+        elif content.find("/www/custom/intl/errorslates/video_error.flv")>=0:
+          content=""
           xbmc.executebuiltin('XBMC.Notification(Error!,Video is not available,5000)')
         elif content.find("/www/custom/intl/errorslates/copyright_error.flv")>=0:
+          content=""
           xbmc.executebuiltin('XBMC.Notification(Error!,Video is not available (copyright issues),5000)')
-        else:
-          if content.find('type="video/mp4" bitrate="1700">')>=0:
-            content=content[content.find('type="video/mp4" bitrate="1700">'):]
-          elif content.find('type="video/mp4" bitrate="1200">')>=0:
-            content=content[content.find('type="video/mp4" bitrate="1200">'):]
-          elif content.find('type="video/mp4" bitrate="750">')>=0:
-            content=content[content.find('type="video/mp4" bitrate="750">'):]
-          elif content.find('type="video/x-flv" bitrate="800">')>=0:
-            content=content[content.find('type="video/x-flv" bitrate="800">'):]
-          elif content.find('type="video/x-flv" bitrate="600">')>=0:
-            content=content[content.find('type="video/x-flv" bitrate="600">'):]
-          elif content.find('type="video/mp4" bitrate="400">')>=0:
-            content=content[content.find('type="video/mp4" bitrate="400">'):]
-          elif content.find('type="video/x-flv" bitrate="250">')>=0:
-            content=content[content.find('type="video/x-flv" bitrate="250">'):]
+        if content!="":
           url=content[content.find("<src>")+5:content.find("</src>")]
           if url.find("http://")==0:
             listitem = xbmcgui.ListItem(path=url)
