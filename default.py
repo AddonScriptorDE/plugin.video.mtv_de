@@ -131,6 +131,8 @@ def artistsAZ(url):
             url="http://www.mtv.de"+match[0]
             match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
             thumb=match[0]
+            if thumb=="http://images.mtvnn.com/2edca9f206f1010355e380e7793b93d4/96x54_":
+              thumb=""
             match=re.compile("<h3 title=(.+?)>", re.DOTALL).findall(entry)
             title=match[0]
             title=title[1:len(title)-1]
