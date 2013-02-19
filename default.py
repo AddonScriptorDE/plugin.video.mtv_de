@@ -93,7 +93,7 @@ def playlist(playlist):
         xbmcplugin.endOfDirectory(pluginhandle)
 
 def artists():
-        letters=["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+        letters = [chr(i) for i in xrange(ord('a'), ord('z')+1)]
         for letter in letters:
           addDir(letter.upper(),letter,'artistsAZ',"")
         xbmcplugin.endOfDirectory(pluginhandle)
@@ -281,14 +281,14 @@ def listCharts(url):
           fh.close()
         content = getUrl(url)
         newTitles=""
-        content = content[content.find("<ol class='charts_list'>"):]
-        content = content[:content.find("</ol>")]
+        content = content[content.find("<div class='current_season'>"):]
+        content = content[:content.find("</ul>")]
         spl=content.split('<li')
         for i in range(1,len(spl),1):
             entry=spl[i]
             if entry.find("class='no_video'")==-1 and entry.find("class='active no_video'")==-1:
-              match=re.compile('href="/(.+?)"', re.DOTALL).findall(entry)
-              url="http://www.mtv.de/"+match[0]
+              match=re.compile("data-uma-token='(.+?)'", re.DOTALL).findall(entry)
+              url=match[0]
               match=re.compile('src="(.+?)"', re.DOTALL).findall(entry)
               thumb=match[0]
               match=re.compile('title="(.+?)"', re.DOTALL).findall(entry)
